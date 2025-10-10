@@ -83,17 +83,38 @@ body {
 }
 
 /* ---------- Auto dark mode ---------- */
-@media (prefers-color-scheme: dark) {
-  :root { --canvas:#0b0f1a; --ink:#e5e7eb; }
-  body  { background-color: var(--canvas); color: var(--ink); }
-  .card { background:#0f1625; border-color:#1f2937; }
-}
+/* Dark mode when <html class="dark">… */
+.dark :root { --canvas:#0b0f1a; --ink:#e5e7eb; }
+.dark body  { background-color: var(--canvas); color: var(--ink); }
+.dark .card { background:#0f1625; border-color:#1f2937; }
+
+/* in src/app/globals.css */
+.input { @apply rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-900/10; }
 
 /* ---------- Small utilities ---------- */
 
 /* Header pills */
 .chip {
   @apply rounded-full border border-slate-300/60 px-3 py-1 text-xs hover:bg-slate-50 transition;
+}
+@layer components {
+  /* one source of truth for inputs */
+  .input {
+    @apply h-11 sm:h-10 w-full rounded-xl border border-slate-300 bg-white px-3 py-2
+           text-base sm:text-sm outline-none focus-visible:ring-2 focus-visible:ring-slate-300
+           focus-visible:border-slate-400;
+  }
+
+  .btn {
+    @apply h-11 sm:h-10 inline-flex items-center justify-center rounded-xl px-4
+           text-sm font-medium transition;
+  }
+  .btn-primary {
+    @apply text-white bg-slate-900 hover:bg-slate-800 focus-visible:ring-2 focus-visible:ring-slate-300;
+  }
+  .btn-ghost {
+    @apply border border-slate-200 bg-white hover:bg-slate-50;
+  }
 }
 
 /* Optional skip-link variant (you’re using sr-only already in layout) */
@@ -105,3 +126,33 @@ body {
 
 /* Fluid section titles */
 h3 { font-size: clamp(0.95rem, 0.82rem + 0.5vw, 1.125rem); }
+/* ---------- Theme ---------- */
+html.dark { color-scheme: dark; }
+html.dark body { background-color: #0b1220; } /* near slate-950 */
+html.dark .bg-white { background-color: #0f172a !important; }   /* card surfaces */
+html.dark .bg-slate-50 { background-color: #0b1220 !important; }
+html.dark .text-slate-600 { color: #94a3b8 !important; }
+html.dark .text-slate-500 { color: #9aa5b1 !important; }
+html.dark .border-slate-200 { border-color: #1f2937 !important; } /* slate-800-ish */
+html.dark .shadow, html.dark .shadow-lg, html.dark .shadow-xl {
+  box-shadow: 0 1px 2px rgba(0,0,0,.45), 0 10px 15px -3px rgba(0,0,0,.4), 0 4px 6px -4px rgba(0,0,0,.4) !important;
+}
+
+/* ---------- Accessibility: Text size ---------- */
+/* All Tailwind font sizes are rem-based, so bumping root font-size scales the UI. */
+html.a11y-text-large { font-size: 18px; } /* 112.5% (default ~16px) */
+
+/* ---------- Accessibility: High contrast ---------- */
+html.a11y-contrast-high a { text-decoration: underline; }
+html.a11y-contrast-high .border { border-width: 2px !important; }
+html.a11y-contrast-high *:focus {
+  outline: 2px solid currentColor !important;
+  outline-offset: 3px;
+}
+
+/* datatable */
+.table-wrap { overflow:auto; border-radius:1rem; box-shadow: inset 0 0 0 1px rgba(15,23,42,.08); background:#fff; }
+.table { width:100%; font-size:.875rem; border-collapse:separate; border-spacing:0; }
+.table th { position:sticky; top:0; background:#fff; text-align:left; font-weight:600; padding:.5rem .75rem; border-bottom:1px solid rgba(15,23,42,.08); }
+.table td { padding:.5rem .75rem; border-bottom:1px solid rgba(15,23,42,.06); }
+.table tr:hover td { background:#f8fafc; }

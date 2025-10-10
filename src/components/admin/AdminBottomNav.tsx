@@ -1,40 +1,38 @@
+// src/components/admin/AdminBottomNav.tsx
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-// Left & right clusters for the 4-tab layout.
+// Admin tabs (same visual style as public bottom nav)
 const LEFT = [
-  { href: "/",           label: "Home",      icon: "🏠" },
-  { href: "/messages",   label: "Messages",  icon: "💬" },
+  { href: "/admin",          label: "Home",     icon: "🏠" },
+  { href: "/admin/services", label: "Services", icon: "🗂️" },
 ] as const;
 
 const RIGHT = [
-  { href: "/favourites", label: "Favourites", icon: "⭐" },
-  { href: "/menu",       label: "Menu",       icon: "▦" },
+  { href: "/admin/banners",   label: "Banners",   icon: "📣" },
+  { href: "/admin/incidents", label: "Incidents", icon: "🚦" },
 ] as const;
 
-// Center FAB opens this Services grid
+// Admin quick actions opened by the center FAB
 const ACTIONS = [
-  { href: "/navigate",    label: "Navigate",     icon: "🗺️" },
-  { href: "/support",     label: "Support",      icon: "🛠️" },
-  { href: "/emergency",   label: "Emergency",    icon: "🚨" },
-  { href: "/orientation", label: "Orientation",  icon: "🎓" },
-  { href: "/events",      label: "Events",       icon: "📅" },
-  { href: "/profile",     label: "Profile",      icon: "👤" },
-  { href: "/messages",    label: "Messages",     icon: "💬" },
-  { href: "/favourites",  label: "Favourites",   icon: "⭐" },
+  { href: "/admin/banners",   label: "New banner",      icon: "📝" },
+  { href: "/admin/incidents", label: "Report incident", icon: "⚠️" },
+  { href: "/admin/services",  label: "Add service",     icon: "➕" },
+  { href: "/admin/incidents", label: "Maintenance",     icon: "🛠️" },
+  { href: "/admin/services",  label: "Edit taxonomy",   icon: "🏷️" },
+  { href: "/admin/logs",      label: "View logs",       icon: "📜" },
+  { href: "/admin/users",     label: "Manage users",    icon: "👥" },
+  { href: "/admin/reports",   label: "Reports",         icon: "📈" },
 ] as const;
 
-export default function BottomNav() {
+export default function AdminBottomNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-  // Don’t early-return; always call hooks. We’ll hide via CSS instead.
-  const isAdminRoute = pathname.startsWith("/admin");
-
-  // Lock page scroll when sheet is open (client-only effect).
+  // lock page scroll when sheet is open (keeps hook order stable)
   useEffect(() => {
     const prev = document.documentElement.style.overflow;
     document.documentElement.style.overflow = open ? "hidden" : prev;
@@ -47,31 +45,30 @@ export default function BottomNav() {
   return (
     <>
       <nav
-        // Keep the className static to avoid hydration diffs; only toggle "hidden".
-        className={`PublicBottomNav fixed inset-x-0 bottom-0 z-[60] border-t border-slate-200
-                    bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70
-                    shadow-[0_-1px_0_rgba(2,6,23,.06),0_-8px_32px_rgba(2,6,23,.08)]
-                    pb-[max(8px,env(safe-area-inset-bottom))] ${isAdminRoute ? "hidden" : ""}`}
+        className="fixed inset-x-0 bottom-0 z-[60] border-t border-slate-200
+                   bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70
+                   shadow-[0_-1px_0_rgba(2,6,23,.06),0_-8px_32px_rgba(2,6,23,.08)]
+                   pb-[max(8px,env(safe-area-inset-bottom))]"
         role="navigation"
-        aria-label="Primary"
+        aria-label="Admin primary"
       >
-        <div className="relative mx-auto flex h-16 max-w-screen-md items-center justify-between px-4">
-          {/* left two */}
+        <div className="relative mx-auto flex h-16 max-w-screen-lg items-center justify-between px-4">
+          {/* left cluster */}
           <div className="flex gap-2 md:gap-3">
-            {LEFT.map((it) => {
-              const active = isActive(it.href);
+            {LEFT.map((t) => {
+              const active = isActive(t.href);
               return (
                 <Link
-                  key={it.href}
-                  href={it.href}
+                  key={t.href}
+                  href={t.href}
                   aria-current={active ? "page" : undefined}
                   className={`relative grid place-items-center rounded-xl px-3 py-1 text-sm transition
                     ${active
                       ? "text-[var(--brand)] font-semibold bg-[color-mix(in_oklab,var(--brand)_10%,transparent)]"
                       : "text-slate-700 hover:bg-slate-50"}`}
                 >
-                  <span aria-hidden className="text-[18px]">{it.icon}</span>
-                  <span className="mt-0.5">{it.label}</span>
+                  <span aria-hidden className="text-[18px] leading-none">{t.icon}</span>
+                  <span className="mt-0.5">{t.label}</span>
                   {active && (
                     <span className="absolute -bottom-1 h-1 w-1 rounded-full bg-[var(--brand)]" />
                   )}
@@ -80,22 +77,22 @@ export default function BottomNav() {
             })}
           </div>
 
-          {/* right two */}
+          {/* right cluster */}
           <div className="flex gap-2 md:gap-3">
-            {RIGHT.map((it) => {
-              const active = isActive(it.href);
+            {RIGHT.map((t) => {
+              const active = isActive(t.href);
               return (
                 <Link
-                  key={it.href}
-                  href={it.href}
+                  key={t.href}
+                  href={t.href}
                   aria-current={active ? "page" : undefined}
                   className={`relative grid place-items-center rounded-xl px-3 py-1 text-sm transition
                     ${active
                       ? "text-[var(--brand)] font-semibold bg-[color-mix(in_oklab,var(--brand)_10%,transparent)]"
                       : "text-slate-700 hover:bg-slate-50"}`}
                 >
-                  <span aria-hidden className="text-[18px]">{it.icon}</span>
-                  <span className="mt-0.5">{it.label}</span>
+                  <span aria-hidden className="text-[18px] leading-none">{t.icon}</span>
+                  <span className="mt-0.5">{t.label}</span>
                   {active && (
                     <span className="absolute -bottom-1 h-1 w-1 rounded-full bg-[var(--brand)]" />
                   )}
@@ -104,9 +101,9 @@ export default function BottomNav() {
             })}
           </div>
 
-          {/* center FAB */}
+          {/* center FAB – uses brand red like public nav */}
           <button
-            aria-label="Open services"
+            aria-label="Open admin services"
             aria-expanded={open}
             onClick={() => setOpen(true)}
             className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-5
@@ -119,7 +116,7 @@ export default function BottomNav() {
         </div>
       </nav>
 
-      {/* Services sheet — bottom on mobile, centered on desktop */}
+      {/* Quick actions sheet — bottom on mobile, centered on desktop */}
       {open && (
         <div className="fixed inset-0 z-[70]">
           <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)} aria-hidden />
@@ -127,18 +124,18 @@ export default function BottomNav() {
             className="absolute inset-x-0 bottom-0 max-h-[85%] rounded-t-3xl bg-white p-4 shadow-2xl
                        md:inset-auto md:bottom-auto md:left-1/2 md:top-1/2 md:max-h-[80vh]
                        md:w-[720px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl"
-            role="dialog" aria-modal="true" aria-label="Services"
+            role="dialog" aria-modal="true" aria-label="Admin services"
           >
             <div className="mx-auto h-1.5 w-12 rounded-full bg-slate-200 md:hidden" />
             <header className="mt-2 mb-2 flex items-center justify-between">
-              <h3 className="text-base font-semibold">Services</h3>
+              <h3 className="text-base font-semibold">Admin services</h3>
               <button onClick={() => setOpen(false)} className="rounded-lg px-2 py-1 text-sm underline">
                 Close
               </button>
             </header>
 
             <div className="grid grid-cols-4 gap-3 md:grid-cols-6 overflow-auto pb-20 md:pb-0">
-              {ACTIONS.map(a => (
+              {ACTIONS.map((a) => (
                 <Link
                   key={a.label}
                   href={a.href}

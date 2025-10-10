@@ -4,7 +4,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import type { ReactNode } from "react";
-
+import Link from "next/link";
 import FeatureBanner from "@/components/FeatureBanner";
 import SearchBar from "@/components/SearchBar";
 import PinnedShortcuts from "@/components/PinnedShortcuts";
@@ -28,6 +28,9 @@ import {
   BookIcon,
 } from "@/components/icons";
 
+/* ---------- Dev-only: subtle staff access ---------- */
+const IS_STAFF_LINK = process.env.NODE_ENV !== "production";
+
 /* ---------- Data ---------- */
 const EVENTS: EventItem[] = [
   { date: "10 Feb", title: "Orientation: 7 things before starting", location: "A002 Lecture Hall" },
@@ -35,7 +38,6 @@ const EVENTS: EventItem[] = [
 ];
 
 const LINKS = {
-  // ✅ exact filename you said: public/images/canvas-logo.png
   canvasImg: "/images/canvas-logo.png",
   portalImg: "/images/swinburne-student_portal.png",
   canvasHref: "https://www.swinburne.edu.my/canvas/",
@@ -47,7 +49,7 @@ const LINKS = {
 type SectionProps = { id?: string; title: string; children: ReactNode };
 const Section = ({ id, title, children }: SectionProps) => (
   <section id={id} className="maxw container-px mt-8 scroll-mt-24">
-    <h3 className="text-base font-semibold mb-3">{title}</h3>
+    <h3 className="mb-3 text-base font-semibold">{title}</h3>
     {children}
   </section>
 );
@@ -62,7 +64,7 @@ const IconBadge = ({ src, alt }: { src: string; alt: string }) => (
 const GRID = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4";
 
 export default function Page() {
-  // Keyboard shortcuts: "/" focuses search; "g" then key jumps to sections
+  // Keyboard shortcuts: "/" focuses search; "g" then key jumps to sections (and admin in dev)
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement)?.tagName;
@@ -85,9 +87,18 @@ export default function Page() {
             s: "#support-events",
             n: "#navigation",
             a: "#academics",
+            d: "/admin", // dev-only direct jump
           };
-          const hash = map[ev.key.toLowerCase()];
-          if (hash) document.querySelector(hash)?.scrollIntoView({ behavior: "smooth", block: "start" });
+          const target = map[ev.key.toLowerCase()];
+          if (!target) return;
+
+          if (target.startsWith("#")) {
+            document
+              .querySelector(target)
+              ?.scrollIntoView({ behavior: "smooth", block: "start" });
+          } else if (IS_STAFF_LINK) {
+            window.location.assign(target);
+          }
         };
         window.addEventListener("keydown", once, { once: true, capture: true });
       }
@@ -112,47 +123,47 @@ export default function Page() {
       <PinnedShortcuts />
       <ServiceStatusBar />
 
-      {/* ✅ Single events section (passes items) */}
+      {/* Upcoming events */}
       <Section id="events" title="Upcoming events">
         <div className="min-h-[96px]">
           <MiniEvents items={EVENTS} limit={2} showHeading={false} showSeeAll={false} />
         </div>
       </Section>
 
-      {/* Student Tools (uses your images via IconBadge) */}
+      {/* Student Tools */}
       <Section id="student-tools" title="Student Tools">
         <div className={GRID}>
-         <TileCard
-  href={LINKS.canvasHref}
-  title="Canvas"
-  icon={
-    <Image
-      src={LINKS.canvasImg}          // ✅ public/images/canvas-logo.png
-      alt="Canvas"
-      width={24}
-      height={24}
-      className="h-6 w-6 object-contain"
-    />
-  }
-  iconVariant="image"                 // ✅ important
-  external
-/>
+          <TileCard
+            href={LINKS.canvasHref}
+            title="Canvas"
+            icon={
+              <Image
+                src={LINKS.canvasImg}
+                alt="Canvas"
+                width={24}
+                height={24}
+                className="h-6 w-6 object-contain"
+              />
+            }
+            iconVariant="image"
+            external
+          />
 
-<TileCard
-  href={LINKS.portalHref}
-  title="Student Portal"
-  icon={
-    <Image
-      src={LINKS.portalImg}          // ✅ public/images/swinburne-student_portal.png
-      alt="Student Portal"
-      width={24}
-      height={24}
-      className="h-6 w-6 object-contain"
-    />
-  }
-  iconVariant="image"                 // ✅ important
-  external
-/>
+          <TileCard
+            href={LINKS.portalHref}
+            title="Student Portal"
+            icon={
+              <Image
+                src={LINKS.portalImg}
+                alt="Student Portal"
+                width={24}
+                height={24}
+                className="h-6 w-6 object-contain"
+              />
+            }
+            iconVariant="image"
+            external
+          />
         </div>
       </Section>
 
@@ -188,9 +199,18 @@ export default function Page() {
         </div>
       </Section>
 
-      <footer className="maxw container-px my-12 text-xs text-slate-500">
-        © Swinburne 2025 · Privacy · We respectfully acknowledge the Wurundjeri People…
-      </footer>
+        <footer className="maxw container-px my-12 text-xs text-slate-500">
+          © Swinburne 2025 · Privacy · We respectfully acknowledge the Wurundjeri People…
+          {IS_STAFF_LINK && (
+            <Link
+              href="/admin"
+              className="ml-3 underline decoration-dotted hover:text-slate-600"
+              aria-label="Staff console"
+            >
+              Staff console
+            </Link>
+          )}
+        </footer>
 
       <ChatLauncher />
     </div>

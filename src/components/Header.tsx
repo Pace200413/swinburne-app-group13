@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import ProfileMenu from "@/components/ProfileMenu";
 
 export default function Header() {
   const pathname = usePathname();
@@ -11,7 +12,6 @@ export default function Header() {
     <header className="sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-slate-200/80 shadow-sm">
       <div className="h-[3px] w-full bg-[#D42A30]" aria-hidden />
 
-      {/* h-16 (was h-14) */}
       <div className="maxw container-px h-16 flex items-center justify-between">
         <Brand />
 
@@ -22,20 +22,19 @@ export default function Header() {
           <QuickPill href="/events"    label="Events"    active={pathname.startsWith("/events")} />
           <QuickPill href="https://www.swinburne.edu.my/canvas/" label="Canvas" external />
           <QuickPill
-            href="https://login.microsoftonline.com/3f639a9b-27c8-4403-82b1-ebfb88052d15/wsfed?wa=wsignin1.0&wtrealm=https%3a%2f%2fsisportal-100380.campusnexus.cloud%2fCMCPortal%2f&wct=2025-10-04T04%3a28%3a18Z&wctx=rm%3d0%26id%3dpassive%26ru%3dsecure%2fstudent%2fstuportal.aspx&wreply=https%3a%2f%2fsisportal-100380.campusnexus.cloud%2fCMCPortal%2f&AppType=Portal&Role=STUDENT"
+            href="https://login.microsoftonline.com/3f639a9b-27c8-4403-82b1-ebfb88052d15/wsfed?wa=wsignin1.0&wtrealm=https%3a%2f%2fsisportal-100380.campusnexus.cloud%2fCMCPortal%2f&wctx=rm%3d0%26id%3dpassive%26ru%3dsecure%2fstudent%2fstuportal.aspx&wreply=https%3a%2f%2fsisportal-100380.campusnexus.cloud%2fCMCPortal%2f&AppType=Portal&Role=STUDENT"
             label="Student Portal"
             external
           />
         </nav>
 
-        {/* w/h-10 (was 9) */}
-        <Link
-          href="/menu"
-          className="w-10 h-10 rounded-full bg-slate-200 grid place-content-center hover:bg-slate-300"
-          aria-label="Profile / menu"
+        {/* SINGLE entry: avatar opens account/admin menu */}
+        <ProfileMenu
+          className="bg-slate-200 hover:bg-slate-300"
+          srLabel="Open account menu"
         >
-          👤
-        </Link>
+          <span aria-hidden>👤</span>
+        </ProfileMenu>
       </div>
 
       <div className="md:hidden border-t border-slate-200/70 bg-white/85">
@@ -46,12 +45,14 @@ export default function Header() {
             <li><QuickPill href="/support"   label="Support"   compact active={pathname.startsWith("/support")} /></li>
             <li><QuickPill href="/events"    label="Events"    compact active={pathname.startsWith("/events")} /></li>
             <li><QuickPill href="https://www.swinburne.edu.my/canvas/" label="Canvas" compact external /></li>
-            <li><QuickPill
-              href="https://login.microsoftonline.com/3f639a9b-27c8-4403-82b1-ebfb88052d15/wsfed?wa=wsignin1.0&wtrealm=https%3a%2f%2fsisportal-100380.campusnexus.cloud%2fCMCPortal%2f&wct=2025-10-04T04%3a28%3a18Z&wctx=rm%3d0%26id%3dpassive%26ru%3dsecure%2fstudent%2fstuportal.aspx&wreply=https%3a%2f%2fsisportal-100380.campusnexus.cloud%2fCMCPortal%2f&AppType=Portal&Role=STUDENT"
-              label="Student Portal"
-              compact
-              external
-            /></li>
+            <li>
+              <QuickPill
+                href="https://login.microsoftonline.com/3f639a9b-27c8-4403-82b1-ebfb88052d15/wsfed?wa=wsignin1.0&wtrealm=https%3a%2f%2fsisportal-100380.campusnexus.cloud%2fCMCPortal%2f&wctx=rm%3d0%26id%3dpassive%26ru%3dsecure%2fstudent%2fstuportal.aspx&wreply=https%3a%2f%2fsisportal-100380.campusnexus.cloud%2fCMCPortal%2f&AppType=Portal&Role=STUDENT"
+                label="Student Portal"
+                compact
+                external
+              />
+            </li>
           </ul>
         </nav>
       </div>
@@ -62,7 +63,6 @@ export default function Header() {
 function Brand() {
   return (
     <Link href="/" aria-label="Swinburne home" className="flex items-center gap-3">
-      {/* 40x40 (was 32x32) */}
       <Image
         src="/images/swinburne-logo.jpg"
         alt="Swinburne University of Technology"
@@ -90,7 +90,7 @@ function QuickPill({
 }) {
   const base =
     "inline-flex items-center justify-center rounded-full border transition whitespace-nowrap " +
-    (compact ? "text-xs px-2.5 py-1" : "text-sm px-3.5 py-1.5"); // px-3.5 (was 3)
+    (compact ? "text-xs px-2.5 py-1" : "text-sm px-3.5 py-1.5");
 
   const style = active
     ? "border-[#D42A30] text-[#D42A30] bg-[#D42A30]/5"
