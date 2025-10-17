@@ -1,0 +1,158 @@
+/* Tailwind v4 */
+@import "tailwindcss";
+
+/* ---------- Design tokens ---------- */
+:root {
+  --brand:  #D42A30;  /* Swinburne red */
+  --ink:    #0f172a;  /* slate-900 */
+  --canvas: #f8fafc;  /* slate-50 */
+
+  /* optional helpers used in shadows/rings */
+  --ring: rgba(2, 6, 23, .08);
+}
+
+/* Font stack using Inter variable from layout.tsx */
+:root { font-synthesis-weight: none; }
+.font-sans {
+  font-family:
+    var(--font-inter),
+    ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+    "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+/* ---------- Base ---------- */
+html, body { height: 100%; }
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--canvas);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* subtle premium background texture */
+  background-image:
+    radial-gradient(900px 520px at 85% -10%, rgba(212,42,48,.06), transparent 60%),
+    radial-gradient(800px 520px at -10% 110%, rgba(15,23,42,.06), transparent 60%);
+}
+
+/* ---------- Layout helpers ---------- */
+.maxw { max-width: 72rem; margin-left: auto; margin-right: auto; }
+.container-px { padding-left: 1rem; padding-right: 1rem; }
+@media (min-width: 768px)  { .container-px { padding-left: 1.5rem; padding-right: 1.5rem; } }
+@media (min-width: 1024px) { .container-px { padding-left: 2rem;   padding-right: 2rem;   } }
+
+/* iOS safe area for bottom nav / fixed UI */
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.safe-top    { padding-top:    env(safe-area-inset-top); }
+
+/* ---------- Cards & interaction polish ---------- */
+.card {
+  background: #fff;
+  border: 1px solid #e2e8f0; /* slate-200 */
+  border-radius: 1rem;       /* ~rounded-2xl */
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+.card:hover { box-shadow: 0 16px 40px rgba(0,0,0,.12); transform: translateY(-2px); }
+
+/* Unified focus ring */
+:where(a, button, input, [role="button"], [role="link"]) { outline: none; }
+:where(a, button, input, [role="button"], [role="link"]):focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--brand) 55%, transparent);
+  border-radius: .75rem;
+}
+
+/* Scrollbar helper */
+.no-scrollbar::-webkit-scrollbar { display: none }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none }
+
+/* ---------- Motion & reveal ---------- */
+@keyframes fade-in-up { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.motion-safe\:animate-fade-in-up { animation: fade-in-up 280ms cubic-bezier(.2,.8,.2,1) both; }
+
+/* Respect reduced motion globally */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .card,
+  ._anim { transform: none !important; }
+}
+
+/* ---------- Auto dark mode ---------- */
+/* Dark mode when <html class="dark">… */
+.dark :root { --canvas:#0b0f1a; --ink:#e5e7eb; }
+.dark body  { background-color: var(--canvas); color: var(--ink); }
+.dark .card { background:#0f1625; border-color:#1f2937; }
+
+/* in src/app/globals.css */
+.input { @apply rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-900/10; }
+
+/* ---------- Small utilities ---------- */
+
+/* Header pills */
+.chip {
+  @apply rounded-full border border-slate-300/60 px-3 py-1 text-xs hover:bg-slate-50 transition;
+}
+@layer components {
+  /* one source of truth for inputs */
+  .input {
+    @apply h-11 sm:h-10 w-full rounded-xl border border-slate-300 bg-white px-3 py-2
+           text-base sm:text-sm outline-none focus-visible:ring-2 focus-visible:ring-slate-300
+           focus-visible:border-slate-400;
+  }
+
+  .btn {
+    @apply h-11 sm:h-10 inline-flex items-center justify-center rounded-xl px-4
+           text-sm font-medium transition;
+  }
+  .btn-primary {
+    @apply text-white bg-slate-900 hover:bg-slate-800 focus-visible:ring-2 focus-visible:ring-slate-300;
+  }
+  .btn-ghost {
+    @apply border border-slate-200 bg-white hover:bg-slate-50;
+  }
+}
+
+/* Optional skip-link variant (you’re using sr-only already in layout) */
+.skip-link { position: absolute; left: -9999px; }
+.skip-link:focus {
+  left: 1rem; top: 1rem; z-index: 50;
+  @apply bg-white text-slate-900 px-3 py-2 rounded-md shadow;
+}
+
+/* Fluid section titles */
+h3 { font-size: clamp(0.95rem, 0.82rem + 0.5vw, 1.125rem); }
+/* ---------- Theme ---------- */
+html.dark { color-scheme: dark; }
+html.dark body { background-color: #0b1220; } /* near slate-950 */
+html.dark .bg-white { background-color: #0f172a !important; }   /* card surfaces */
+html.dark .bg-slate-50 { background-color: #0b1220 !important; }
+html.dark .text-slate-600 { color: #94a3b8 !important; }
+html.dark .text-slate-500 { color: #9aa5b1 !important; }
+html.dark .border-slate-200 { border-color: #1f2937 !important; } /* slate-800-ish */
+html.dark .shadow, html.dark .shadow-lg, html.dark .shadow-xl {
+  box-shadow: 0 1px 2px rgba(0,0,0,.45), 0 10px 15px -3px rgba(0,0,0,.4), 0 4px 6px -4px rgba(0,0,0,.4) !important;
+}
+
+/* ---------- Accessibility: Text size ---------- */
+/* All Tailwind font sizes are rem-based, so bumping root font-size scales the UI. */
+html.a11y-text-large { font-size: 18px; } /* 112.5% (default ~16px) */
+
+/* ---------- Accessibility: High contrast ---------- */
+html.a11y-contrast-high a { text-decoration: underline; }
+html.a11y-contrast-high .border { border-width: 2px !important; }
+html.a11y-contrast-high *:focus {
+  outline: 2px solid currentColor !important;
+  outline-offset: 3px;
+}
+
+/* datatable */
+.table-wrap { overflow:auto; border-radius:1rem; box-shadow: inset 0 0 0 1px rgba(15,23,42,.08); background:#fff; }
+.table { width:100%; font-size:.875rem; border-collapse:separate; border-spacing:0; }
+.table th { position:sticky; top:0; background:#fff; text-align:left; font-weight:600; padding:.5rem .75rem; border-bottom:1px solid rgba(15,23,42,.08); }
+.table td { padding:.5rem .75rem; border-bottom:1px solid rgba(15,23,42,.06); }
+.table tr:hover td { background:#f8fafc; }

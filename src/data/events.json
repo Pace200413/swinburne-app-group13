@@ -1,0 +1,5 @@
+[
+  { "id": "o-week", "title": "Orientation: 7 things before starting", "date": "2025-02-10T02:00:00.000Z", "location": "A002 Lecture Hall", "type": "Orientation" },
+  { "id": "ai-meetup", "title": "AI Student Meetup", "date": "2025-03-05T10:00:00.000Z", "location": "Innovation Hub", "type": "Student Life" },
+  { "id": "career-fair", "title": "Career Fair", "date": "2025-04-02T02:00:00.000Z", "location": "Atrium", "type": "Careers" }
+]
