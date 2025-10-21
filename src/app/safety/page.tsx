@@ -1,6 +1,8 @@
 "use client";
 
+import { motion } from "framer-motion";
 import {
+  FaDoorOpen,
   FaFireExtinguisher,
   FaUserShield,
   FaFirstAid,
@@ -18,174 +20,193 @@ import {
   FaPhoneAlt,
   FaComments,
 } from "react-icons/fa";
-import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default function SafetyPage() {
   return (
-    <div className="min-h-screen bg-[#fafafa] pb-16">
-      {/* Global header comes from layout.tsx */}
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pb-24">
+      {/* Sticky actions */}
+      {/* 🔴 Top Bar (not sticky, same height as Emergency) */}
+        <div className="bg-white border-b border-gray-200 shadow-sm">
+          <div className="max-w-6xl mx-auto px-6 py-3 flex gap-3">
+            <a
+              href="tel:999"
+              className="flex-1 inline-flex items-center justify-center rounded-xl px-4 py-3 bg-[#EF4444] text-white font-semibold shadow-sm hover:bg-red-600"
+            >
+              <FaPhoneAlt className="mr-2" /> Emergency 999
+            </a>
+            <Link
+              href="/exit-navigation"
+              className="flex-1 inline-flex items-center justify-center rounded-xl px-4 py-3 bg-gray-900 text-white font-semibold shadow-sm hover:bg-black"
+            >
+              Go to Exit Navigation
+            </Link>
+          </div>
+        </div>
 
-      {/* Page Header */}
-      <div className="max-w-5xl mx-auto px-6 py-8">
+
+      {/* Title */}
+      <div className="max-w-6xl mx-auto px-6 py-8">
         <motion.h1
-          className="text-2xl font-semibold text-gray-900"
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
+          className="text-2xl font-semibold text-gray-900"
         >
           Staying Safe on Campus
         </motion.h1>
-        <p className="text-gray-500 text-sm">
-          A guide for students, parents, and visitors to navigate safely and get
-          help when needed.
+        <p className="text-gray-600 text-sm">
+          Practical guidance for students, staff, and visitors.
         </p>
       </div>
 
       {/* Quick Links */}
-      <div className="max-w-5xl mx-auto px-6 mb-8">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <QuickLink icon={<FaPhoneAlt />} label="Emergency" href="/security-contact" />
-          <QuickLink icon={<FaLaptop />} label="IT Help" href="mailto:helpdesk@swin.edu.my" />
-          <QuickLink icon={<FaEnvelope />} label="Report" href="mailto:safety@swin.edu.my" />
-        </div>
+      <div className="max-w-6xl mx-auto px-6 mb-6 grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <QuickLink icon={<FaPhoneAlt />} label="Security" href="tel:082260607" />
+        <QuickLink icon={<FaLaptop />} label="IT Help" href="mailto:helpdesk@swin.edu.my" />
+        <QuickLink icon={<FaEnvelope />} label="Report" href="/support" />
       </div>
 
-      {/* Main Safety Content */}
-      <div className="max-w-5xl mx-auto px-6 space-y-6">
+      {/* Sections */}
+      <div className="max-w-6xl mx-auto px-6 space-y-6">
         <SafetyCard
-          icon={<FaFireExtinguisher className="text-gray-500 w-5 h-5" />}
+          icon={<FaFireExtinguisher className="text-gray-500" />}
           title="Fire Safety"
-          text="Remain calm and evacuate immediately during a fire. Use stairs, not elevators, and follow exit signs. Alert others and call Campus Security or 999."
+          text="Remain calm and evacuate. Use stairs, not lifts. Follow exit signs and assist others if safe."
+          link="/exit-navigation"
+          linkLabel="Open Exit Navigation"
         />
         <SafetyCard
-          icon={<FaUserShield className="text-gray-500 w-5 h-5" />}
+          icon={<FaUserShield className="text-gray-500" />}
           title="Personal Safety"
-          text="Stay alert and aware of your surroundings. Avoid dark or isolated areas at night. If you feel unsafe, contact Campus Security right away."
+          text="Stay alert; avoid isolated areas late at night. If you feel unsafe, call Campus Security immediately."
+          link="tel:082260607"
+          linkLabel="Call Security"
         />
         <SafetyCard
-          icon={<FaFirstAid className="text-gray-500 w-5 h-5" />}
+          icon={<FaFirstAid className="text-gray-500" />}
           title="Medical Emergencies"
-          text="For urgent medical assistance, call Campus Security (082-260-607) or Emergency Services (999). Remain calm and provide clear details of your location."
-        />
-        <SafetyCard
-          icon={<FaFlask className="text-gray-500 w-5 h-5" />}
-          title="Laboratory Safety"
-          text="Wear protective gear, follow instructions, and report spills or injuries immediately. Dispose of materials safely and never work alone in the lab."
-        />
-        <SafetyCard
-          icon={<FaCloudSunRain className="text-gray-500 w-5 h-5" />}
-          title="Weather & Environmental Hazards"
-          text="During severe weather, stay indoors and follow campus alerts. Avoid flooded areas and stay away from tall trees or open spaces during storms."
+          text="For urgent help call 999 or Campus Security (082-260-607). Provide your location and stay on the line."
+          link="tel:999"
+          linkLabel="Call 999"
         />
 
-        <SectionTitle title="Visitor & New Student Help" />
+        <SectionTitle title="Labs & Environment" />
         <SafetyCard
-          icon={<FaInfoCircle className="text-gray-500 w-5 h-5" />}
-          title="Campus Information Counter"
-          text="Located in the ADM Building main lobby. Get directions, visitor passes, or general help. Open weekdays 8:30 AM – 5:00 PM."
+          icon={<FaFlask className="text-gray-500" />}
+          title="Laboratory Safety"
+          text="Wear PPE and follow instructions. Report spills or incidents at once. Do not work alone."
         />
         <SafetyCard
-          icon={<FaHandsHelping className="text-gray-500 w-5 h-5" />}
-          title="Student & Parent Support Office"
-          text="Need assistance with student life, safety, or housing? Visit the Student Support Centre or call 082-260-610."
+          icon={<FaCloudSunRain className="text-gray-500" />}
+          title="Weather & Environmental Hazards"
+          text="During severe weather, stay indoors and follow campus alerts. Avoid flooded areas."
+        />
+
+        <SectionTitle title="Visitor & Student Help" />
+        <SafetyCard
+          icon={<FaInfoCircle className="text-gray-500" />}
+          title="Information Counter"
+          text="ADM Building lobby, weekdays 8:30–17:00. Get directions, passes, and assistance."
+        />
+        <SafetyCard
+          icon={<FaHandsHelping className="text-gray-500" />}
+          title="Student Support Centre"
+          text="Need help with housing or wellbeing? Call 082-260-610."
         />
 
         <SectionTitle title="Lost & Found" />
         <SafetyCard
-          icon={<FaBoxOpen className="text-gray-500 w-5 h-5" />}
+          icon={<FaBoxOpen className="text-gray-500" />}
           title="Report Lost Items"
-          text="If you’ve lost something on campus, visit the Campus Security Office or call 082-260-607. Items are held for up to 30 days before disposal."
+          text="Visit Campus Security Office or call 082-260-607. Items are held up to 30 days."
+          link="tel:082260607"
+          linkLabel="Call Security"
         />
 
-        <SectionTitle title="Health & Wellness Support" />
+        <SectionTitle title="Health & Wellness" />
         <SafetyCard
-          icon={<FaClinicMedical className="text-gray-500 w-5 h-5" />}
-          title="On-Campus Health Clinic"
-          text="Open Monday to Friday, 9 AM – 4 PM. Provides first aid and general medical assistance. Located next to the Student Centre."
+          icon={<FaClinicMedical className="text-gray-500" />}
+          title="On-Campus Clinic"
+          text="Open Mon–Fri, 9:00–16:00. Next to the Student Centre."
         />
         <SafetyCard
-          icon={<FaHandsHelping className="text-gray-500 w-5 h-5" />}
-          title="Counselling & Mental Health"
-          text="Students can reach out to the Counselling Unit at 082-260-620 or email counselling@swin.edu.my for confidential support."
-        />
-
-        <SectionTitle title="Tech & Access Help" />
-        <SafetyCard
-          icon={<FaLaptop className="text-gray-500 w-5 h-5" />}
-          title="IT Service Desk"
-          text="Having trouble accessing Wi-Fi or your student portal? Visit the IT Service Desk or email helpdesk@swin.edu.my for assistance."
+          icon={<FaHandsHelping className="text-gray-500" />}
+          title="Counselling"
+          text="Confidential support via counselling@swin.edu.my or 082-260-620."
+          link="mailto:counselling@swin.edu.my"
+          linkLabel="Email Counselling"
         />
 
-        <SectionTitle title="Campus Navigation & Transportation" />
+        <SectionTitle title="Transport & Night Escort" />
         <SafetyCard
-          icon={<FaBusAlt className="text-gray-500 w-5 h-5" />}
+          icon={<FaBusAlt className="text-gray-500" />}
           title="Campus Shuttle"
-          text="A free shuttle service runs between main campus buildings from 8 AM to 6 PM. Check schedules on the Swinburne app or information boards."
+          text="Free shuttle runs 8:00–18:00 between main buildings."
         />
         <SafetyCard
-          icon={<FaMapMarkerAlt className="text-gray-500 w-5 h-5" />}
+          icon={<FaMapMarkerAlt className="text-gray-500" />}
           title="Visitor Parking"
-          text="Visitors can park near the ADM Building. Parking permits are available from the Information Counter."
+          text="Parking near ADM Building; permits at the Information Counter."
         />
-
-        <SectionTitle title="Security Escort & Night Transport" />
         <SafetyCard
-          icon={<FaMoon className="text-gray-500 w-5 h-5" />}
-          title="Campus Night Escort"
-          text="Security escorts are available after dark to accompany you safely between buildings. Call 082-260-607 to request assistance."
+          icon={<FaMoon className="text-gray-500" />}
+          title="Security Escort (Night)"
+          text="Security escorts are available after dark between buildings."
+          link="tel:082260607"
+          linkLabel="Request Escort"
         />
 
-        <SectionTitle title="Emergency Assembly Points" />
-        <SafetyCard
-          icon={<FaMapMarkerAlt className="text-gray-500 w-5 h-5" />}
-          title="Designated Assembly Areas"
-          text="After evacuating any building, proceed calmly to your nearest assembly point marked with a green 'Meeting Point' sign. Stay until all-clear."
-        />
-
-        <SectionTitle title="Report or Give Feedback" />
+        <SectionTitle title="Feedback" />
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 text-center">
           <FaComments className="text-gray-500 w-6 h-6 mx-auto mb-3" />
-          <h2 className="font-semibold text-gray-800 mb-2">We Value Your Feedback</h2>
+          <h2 className="font-semibold text-gray-800 mb-2">We value your feedback</h2>
           <p className="text-sm text-gray-600 mb-4">
-            Have a concern, suggestion, or safety issue? Let us know so we can
-            improve campus safety and support.
+            Have a concern, suggestion, or safety issue? Let us know.
           </p>
-          <a
-            href="mailto:safety@swin.edu.my"
-            className="inline-block bg-red-600 text-white text-sm font-medium rounded-lg px-4 py-2 hover:bg-red-700 transition"
+          <Link
+            href="/support"
+            className="inline-block bg-[#EF4444] text-white text-sm font-semibold rounded-lg px-4 py-2 hover:bg-red-600"
           >
-            Send Feedback
-          </a>
+            Go to Support / Report
+          </Link>
         </div>
       </div>
     </div>
   );
 }
 
-/* --- Reusable Components --- */
 function SafetyCard({
   icon,
   title,
   text,
+  link,
+  linkLabel,
 }: {
   icon: React.ReactNode;
   title: string;
   text: string;
+  link?: string;
+  linkLabel?: string;
 }) {
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-      <div className="flex items-center space-x-3 mb-2">
-        {icon}
-        <h2 className="font-semibold text-gray-800">{title}</h2>
+      <div className="flex items-center gap-3 mb-2">
+        <div className="text-lg">{icon}</div>
+        <h2 className="font-semibold text-gray-900">{title}</h2>
       </div>
-      <p className="text-sm text-gray-600 leading-relaxed">{text}</p>
+      <p className="text-sm text-gray-700 mb-3">{text}</p>
+      {link && (
+        <Link href={link} className="text-[#EF4444] text-sm font-medium hover:underline">
+          {linkLabel ?? "Learn more"}
+        </Link>
+      )}
     </div>
   );
 }
 
 function SectionTitle({ title }: { title: string }) {
   return (
-    <h3 className="text-lg font-semibold text-gray-800 pt-4 pb-1 border-b border-gray-100">
+    <h3 className="text-lg font-semibold text-gray-800 pt-6 pb-1 border-b border-gray-100">
       {title}
     </h3>
   );
@@ -203,7 +224,7 @@ function QuickLink({
   return (
     <Link
       href={href}
-      className="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow transition p-4 text-gray-700"
+      className="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition p-4 text-gray-700"
     >
       <div className="text-gray-500 text-lg mb-1">{icon}</div>
       <span className="text-sm font-medium">{label}</span>
