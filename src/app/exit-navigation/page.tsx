@@ -1,23 +1,37 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
 import {
   FaDoorOpen,
+  FaPhoneAlt,
   FaMapMarkedAlt,
   FaWalking,
   FaDirections,
   FaMapPin,
   FaExclamationCircle,
   FaSearch,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaTools,
 } from "react-icons/fa";
+import Link from "next/link";
+
+type ExitInfo = {
+  location: string;
+  name: string;
+  distance: string;
+  direction: string;
+  estimatedTime: string;
+  status: "Open" | "Closed" | "Under Maintenance";
+};
 
 export default function ExitNavigationPage() {
   const [userLocation, setUserLocation] = useState("ADM Building, Level 2");
   const [search, setSearch] = useState("");
 
-  const exits = [
+  const exits: ExitInfo[] = [
     {
       location: "ADM Building, Level 2",
       name: "Main Entrance - ADM Building",
@@ -52,25 +66,25 @@ export default function ExitNavigationPage() {
     },
   ];
 
-  const nearestExit = exits[1];
+  const nearestExit = exits.find((e) => e.status === "Open") ?? exits[0];
 
   const filteredExits = useMemo(
     () =>
       exits.filter(
-        (exit) =>
-          exit.name.toLowerCase().includes(search.toLowerCase()) ||
-          exit.location.toLowerCase().includes(search.toLowerCase())
+        (e) =>
+          e.name.toLowerCase().includes(search.toLowerCase()) ||
+          e.location.toLowerCase().includes(search.toLowerCase())
       ),
-    [search, exits]
+    [search]
   );
 
   const handleLocateMe = () => {
-    toast.loading("Updating your location...");
+    toast.loading("Updating your location…");
     setTimeout(() => {
       toast.dismiss();
       setUserLocation("Library, Ground Floor");
-      toast.success("Location updated successfully!");
-    }, 1000);
+      toast.success("Location updated");
+    }, 900);
   };
 
   const openNavigation = () => {
@@ -81,46 +95,62 @@ export default function ExitNavigationPage() {
     navigator.clipboard.writeText(
       `From ${userLocation}, go to ${nearestExit.name}. Direction: ${nearestExit.direction}.`
     );
-    toast.success("Directions copied!");
+    toast.success("Directions copied");
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pb-16">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pb-32">
       <Toaster position="top-center" />
 
-      {/* Page Header */}
-      <header className="max-w-5xl mx-auto px-6 py-8">
+      {/* 🔴 Top Bar (same height and visual as Emergency Page, NOT sticky) */}
+      <div className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-6xl mx-auto px-6 py-3 flex gap-3">
+          <a
+            href="tel:999"
+            className="flex-1 inline-flex items-center justify-center rounded-xl px-4 py-3 bg-[#EF4444] text-white font-semibold shadow-sm hover:bg-red-600 transition"
+          >
+            <FaPhoneAlt className="mr-2" /> Emergency 999
+          </a>
+          <Link
+            href="/exit-navigation"
+            className="flex-1 inline-flex items-center justify-center rounded-xl px-4 py-3 bg-gray-900 text-white font-semibold shadow-sm hover:bg-black transition"
+          >
+            Go to Exit Navigation
+          </Link>
+        </div>
+      </div>
+
+      {/* Header */}
+      <header className="max-w-6xl mx-auto px-6 py-6">
         <motion.h1
-          className="text-3xl font-bold text-gray-900"
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
+          className="text-2xl font-bold text-gray-900"
         >
           Exit Navigation
         </motion.h1>
-        <p className="text-gray-500 text-sm">
-          Find the nearest safe exit and view all available emergency exits around campus.
+        <p className="text-gray-600">
+          Find the nearest safe exit and view real-time status.
         </p>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-6 space-y-6">
+      <main className="max-w-6xl mx-auto px-6 space-y-6">
         {/* Current Location */}
         <motion.div
-          className="bg-white rounded-2xl border border-gray-200 shadow-md p-6 hover:shadow-lg transition"
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6"
         >
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3">
             <div>
-              <h2 className="font-semibold text-gray-800 text-lg mb-1 flex items-center">
-                <FaMapPin className="text-gray-500 mr-2" />
-                Your Current Location
+              <h2 className="font-semibold text-gray-900 text-lg flex items-center">
+                <FaMapPin className="text-gray-500 mr-2" /> Your Current Location
               </h2>
-              <p className="text-gray-600">{userLocation}</p>
+              <p className="text-gray-700">{userLocation}</p>
             </div>
             <button
               onClick={handleLocateMe}
-              className="text-sm bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+              className="text-sm bg-[#EF4444] text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
             >
               Update Location
             </button>
@@ -129,125 +159,120 @@ export default function ExitNavigationPage() {
 
         {/* Nearest Exit */}
         <motion.div
-          className="bg-white rounded-2xl border border-gray-200 shadow-md p-6 space-y-3 hover:shadow-lg transition"
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6"
         >
-          <div className="flex items-center space-x-3 mb-1">
-            <FaDoorOpen className="text-[#EF4444] w-5 h-5" />
+          <div className="flex items-center gap-2 mb-2">
+            <FaDoorOpen className="text-[#EF4444]" />
             <h2 className="font-semibold text-gray-900 text-lg">Nearest Exit</h2>
           </div>
           <p className="text-gray-800 font-medium">{nearestExit.name}</p>
           <p className="text-gray-500 text-sm">
-            Distance: {nearestExit.distance} | Est. Time: {nearestExit.estimatedTime}
+            Distance: {nearestExit.distance} • Est. Time:{" "}
+            {nearestExit.estimatedTime}
           </p>
           <p className="text-gray-600 text-sm">Direction: {nearestExit.direction}</p>
           <StatusBadge status={nearestExit.status} />
 
-          {/* Map placeholder (no API key needed) */}
+          {/* Mini Map Placeholder */}
           <div className="mt-4 rounded-xl overflow-hidden border border-gray-100">
-            <div className="w-full h-[160px] bg-[linear-gradient(135deg,#f5f7fa,#e4e7eb)] grid place-items-center">
-              <span className="text-xs text-gray-500">Map preview</span>
+            <div className="w-full h-40 bg-gray-100 flex items-center justify-center text-gray-500 text-sm">
+              Map preview (add Google Static Maps key to show real map)
             </div>
           </div>
         </motion.div>
 
         {/* Navigation Buttons */}
         <motion.div
-          className="bg-white rounded-2xl border border-gray-200 shadow-md p-6 text-center hover:shadow-lg transition"
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 text-center"
         >
-          <h2 className="font-semibold text-gray-900 flex items-center justify-center space-x-2 mb-4">
-            <FaMapMarkedAlt className="text-[#EF4444]" />
-            <span>Navigation Options</span>
-          </h2>
+          <h3 className="font-semibold text-gray-900 mb-4 flex items-center justify-center gap-2">
+            <FaMapMarkedAlt /> Navigation Options
+          </h3>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={openNavigation}
-              className="flex items-center justify-center bg-red-600 text-white px-5 py-3 rounded-lg hover:bg-red-700 transition w-full sm:w-auto"
+              className="flex items-center justify-center bg-[#EF4444] text-white px-5 py-3 rounded-lg hover:bg-red-600 w-full sm:w-auto font-semibold transition"
             >
-              <FaDirections className="w-5 h-5 mr-2" />
+              <FaDirections className="mr-2" />
               Open in Maps
             </button>
             <button
               onClick={copyDirections}
-              className="flex items-center justify-center border border-gray-300 text-gray-700 px-5 py-3 rounded-lg hover:bg-gray-50 transition w-full sm:w-auto"
+              className="flex items-center justify-center border border-gray-300 text-gray-800 px-5 py-3 rounded-lg hover:bg-gray-50 w-full sm:w-auto font-semibold transition"
             >
-              <FaWalking className="w-5 h-5 mr-2" />
+              <FaWalking className="mr-2" />
               Copy Directions
             </button>
           </div>
         </motion.div>
 
-        {/* All Exits Section */}
+        {/* All Exits */}
         <motion.div
-          className="bg-white rounded-2xl border border-gray-200 shadow-md p-6 hover:shadow-lg transition"
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mt-6 mb-4"
         >
           <div className="flex justify-between items-center mb-4">
             <h2 className="font-semibold text-gray-900 text-lg flex items-center">
               <FaDoorOpen className="text-[#EF4444] mr-2" /> All Campus Exits
             </h2>
-            <div className="flex items-center border border-gray-200 rounded-lg px-2 py-1">
-              <FaSearch className="text-gray-400 mr-2" />
+            <label className="flex items-center border border-gray-300 rounded-lg px-3 py-2 shadow-sm bg-gray-50">
+              <FaSearch className="text-gray-500 mr-2" />
               <input
                 type="text"
-                placeholder="Search exits..."
+                placeholder="Search exits…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="text-sm focus:outline-none bg-transparent"
+                className="text-sm focus:outline-none bg-transparent w-28"
+                aria-label="Search exits"
               />
-            </div>
+            </label>
           </div>
 
           <div className="space-y-3">
-            {filteredExits.map((exit, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ scale: 1.01 }}
+            {filteredExits.map((e, i) => (
+              <div
+                key={i}
                 className="flex justify-between items-center border border-gray-100 rounded-xl p-4 hover:bg-gray-50 transition"
               >
                 <div>
-                  <p className="font-medium text-gray-900">{exit.name}</p>
+                  <p className="font-medium text-gray-900">{e.name}</p>
                   <p className="text-gray-500 text-sm">
-                    {exit.location} • {exit.distance}
+                    {e.location} • {e.distance}
                   </p>
                 </div>
-                <StatusBadge status={exit.status} />
-              </motion.div>
+                <StatusBadge status={e.status} />
+              </div>
             ))}
           </div>
         </motion.div>
-
-        {/* Safety Tip */}
-        <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-sm text-gray-700 flex items-center mt-6">
-          <FaExclamationCircle className="text-red-500 mr-2" />
-          <p>
-            <strong>Emergency Hotline:</strong> 082-260-607 · Always follow illuminated exit signs during evacuation.
-          </p>
-        </div>
       </main>
     </div>
   );
 }
 
-/* --- Status Badge Component --- */
-function StatusBadge({ status }: { status: string }) {
-  let color = "bg-gray-100 text-gray-700 border border-gray-300";
-  let icon = <FaExclamationCircle className="w-4 h-4 mr-1 text-gray-500" />;
+function StatusBadge({ status }: { status: ExitInfo["status"] }) {
+  let styles =
+    "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border";
+  let icon: JSX.Element = <FaExclamationCircle className="mr-1" />;
 
   if (status === "Open") {
-    color = "bg-green-50 text-green-700 border border-green-200";
-    icon = <FaExclamationCircle className="w-4 h-4 mr-1 text-green-500" />;
-  } else if (status === "Closed" || status === "Under Maintenance") {
-    color = "bg-red-50 text-[#EF4444] border border-red-200";
-    icon = <FaExclamationCircle className="w-4 h-4 mr-1 text-[#EF4444]" />;
+    styles += " bg-green-50 text-green-700 border-green-200";
+    icon = <FaCheckCircle className="mr-1" />;
+  } else if (status === "Closed") {
+    styles += " bg-red-50 text-[#EF4444] border-red-200";
+    icon = <FaTimesCircle className="mr-1" />;
+  } else {
+    styles += " bg-yellow-50 text-yellow-700 border-yellow-200";
+    icon = <FaTools className="mr-1" />;
   }
 
   return (
-    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${color}`}>
+    <span className={styles} aria-live="polite">
       {icon}
       {status}
     </span>
